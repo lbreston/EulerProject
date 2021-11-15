@@ -1,8 +1,8 @@
 # Signal processing library 
 using DSP
 
-# Generating function for distribution of sums:  f(s) = ΣG(x,y) = Σg_n,k*x^n*y^k = ∏_n(1+x*y^k) 
-# where n is the subset size and k is value of the sum 
+# Generating function for distribution of sums:  f(s) = ΣG(x,y) = Σg_{n,k}*x^n*y^k = ∏_n(1+x*y^k) 
+# where and g_n,k is the number of subsets of size n with k sum  
 
 # creates vector of factors of generator function P[k] = (1+x*y^k) for sequence of squares from 1:k_max²
 function generating_factors(k_max)
@@ -31,15 +31,15 @@ function compute_generating_coefs(G, n)
     end
    # computes product using convolutions. Convolutions use FFTs to make it go way faster!
     coefs = reduce((x,y)->clipvals.(conv(x,y)), G)
-    vals =  collect(0:size(coefs,2)-1)
-    return coefs[n+1, :], vals 
+    sub_sums =  collect(0:size(coefs,2)-1)
+    return coefs[n+1, :], sub_sums
 end
 
 # sum of the unique subset sums 
 function sum_unique_subset_sums(k_max, n)
     G = generating_factors(k_max)
-    coefs, vals = compute_generating_coefs(G, n)
-    return sum(vals[coefs.==1])
+    coefs, sub_sums = compute_generating_coefs(G, n)
+    return sum(sub_sums[coefs.==1])
 end
 
 
