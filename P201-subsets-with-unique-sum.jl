@@ -10,9 +10,9 @@ function generating_factors(k_max)
     #* n+1 x k+1 matrix encoding: row = size of subset, column = degree of value of sum
     #* first row and column represent n,k=0 
     function f̨ₖ(k)
-        f=zeros(Int8,2,k^2+1)
+        f=zeros(Int8,k^2+1,2)
         f[1,1]=1
-        f[2,k^2+1]=1
+        f[k^2+1,2]=1
         return f
     end
     return [f̨ₖ(k) for k in 1:k_max]
@@ -52,8 +52,8 @@ function compute_generating_coefs(G, n; dp=true)
     else 
         coefs = reduce((x,y)->clipvals.(conv(x,y)), G)
     end
-    sub_sums =  collect(0:size(coefs,2)-1)
-    return coefs[n+1, :], sub_sums 
+    sub_sums =  collect(0:size(coefs,1)-1)
+    return coefs[:, n+1], sub_sums 
 end
 
 
@@ -63,7 +63,6 @@ function sum_unique_subset_sums(k_max, n)
     coefs, sub_sums = compute_generating_coefs(G, n)
     return sum(sub_sums[coefs.==1])
 end
-
 
 sum_unique_subset_sums(100,50)
 
